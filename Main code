@@ -1,0 +1,482 @@
+import time
+import subprocess
+import statistics
+from fractions import Fraction
+import uuid
+import json
+import urllib.request
+import time
+import math
+pre_price = 25
+current_lang = "en"
+past_calculation_list = []
+language = {
+    "da" : {
+        "main title": "Welcomen til arifs super cool lommeregner",
+        "basic": "1. grundlæggende matematik",
+        "advanced": "2. avanceret matematik",
+        "past": "3. Se tidligere beregninger",
+        "change lang": "4. Skift sprog!",
+        "prem_msg": "Det ser ud til, at du bruger premium. Tak!",
+        "pick": "\nHvilken vil du vælge?: ",
+        "how to premium": "5. Hvordan man køber premium"
+        
+    },
+    "en" : {
+        "main title": "Welcome to arifs super cool calculator",
+        "basic": "1. basic math",
+        "advanced": "2. Advanced math",
+        "past": "3. view past calculations",
+        "change lang": "4. Change language!",
+        "prem_msg": "Looks like your using premium. Thanks!",
+        "pick": "\nWhich do you wanna pick?: ",
+        "how to premium": "5. How to buy premium"
+        
+
+    },
+    "tr" : {
+        "main title": "Arif'in süper havalı hesap makinesine hoş geldiniz",
+        "basic": "1. temel matematik",
+        "advanced": "2. ileri matematik",
+        "past": "3. Geçmiş hesaplamaları görüntüleyin",
+        "change lang": "4. Dili değiştirin!",
+        "prem_msg": "Premium kullanıyorsunuz sanırım. Teşekkürler!",
+        "pick": "\nHangisini seçmek istersin?: ",
+        "how to premium": "5. Premium nasıl satın alınır"
+
+    }
+
+
+
+
+
+
+}
+premium = False
+
+import os
+
+def clear_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+
+
+
+
+
+import subprocess
+import urllib.request
+import json
+import time
+
+premium = False
+
+def get_motherboard_serial():
+    try:
+        cmd = 'powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty ProcessorId"'
+        output = subprocess.check_output(cmd, shell=True)
+        serial = output.decode().strip()
+        return serial if serial else "UNKNOWN"
+    except Exception:
+        return "UNKNOWN"
+
+def check_premium():
+    global premium
+    serial = get_motherboard_serial()
+    print("Connecting to server pls wait!")
+    print("Could take a small minute")
+
+    url = "https://mac-checker.onrender.com/check"
+    data = json.dumps({"mac": serial}).encode('utf-8')
+    headers = {'Content-Type': 'application/json'}
+
+    while True:
+        req = urllib.request.Request(url, data=data, headers=headers, method='POST')
+        try:
+            with urllib.request.urlopen(req, timeout=5) as response:
+                if response.status == 200:
+                    resp_data = response.read()
+                    resp_json = json.loads(resp_data)
+                    allowed = resp_json.get("allowed")
+
+                    if allowed is True:
+                        print("🎉 This device is PREMIUM!")
+                        premium = True
+                        break
+                    elif allowed is False:
+                        print("⛔ This device is NOT premium.")
+                        premium = False
+                        break
+                    else:
+                        print("⚠️ Server response unclear, retrying...")
+                else:
+                    print(f"Server error: {response.status}, retrying...")
+        except Exception as e:
+            print(f"Request failed: {e}, retrying in 2s...")
+        time.sleep(2)
+
+check_premium()
+
+
+def main():
+    clear_terminal()
+    while True:
+        print(language[current_lang]["main title"])
+        print(language[current_lang]["basic"])
+        print(language[current_lang]["advanced"])
+        print(language[current_lang]["past"])
+        print(language[current_lang]["change lang"])
+        print(language[current_lang]["how to premium"])
+        print("6. Update log")
+        
+        if premium == True:
+            print(language[current_lang]["prem_msg"])
+        elif premium == False:
+            print("\nLooks like your using basic. wanna upgrade?")
+            print("IF its a error it might be because of our server")
+            print("ICheck WIFI connection too!")
+            print("Please relaunch until its correct. Sorry!")
+            
+        
+        calcu_choice = input(print(language[current_lang]["pick"]))
+
+        if calcu_choice == "1":
+            basic_cal() 
+            break
+        elif calcu_choice == "2":
+            if premium == True:
+                advanced_cal()
+            else:
+                print("Sorry this is a Premium Selection!")
+                time.sleep(2)
+                clear_terminal()
+        elif calcu_choice == "3":
+            if premium == True:
+                for i in past_calculation_list:
+                    print(f"\n {i}")
+            else:
+                print("Sorry this is a Premium Selection!")
+                time.sleep(2)
+        elif calcu_choice == "4":
+            change_language()
+        elif calcu_choice == "5":
+            mac = get_motherboard_serial()
+            print(f"🔍 Ur computers nums: {mac}")
+            print(f"meet me in person and give me the cash: {pre_price}dkk ")
+            print(f"text me or show me {mac}")
+            print("after some time you should restart and have premium!")
+        elif calcu_choice == "6":
+            update_log()
+
+def basic_cal():
+    while True:
+        clear_terminal()
+        print("You have picked basic math!")
+        print("1. + - * /")
+        print("2. get procent of a number")
+        print("3. get avg of a list of numbers")
+        print("4. find med, low, highest of a list of numbers")
+        basic_choice = input("Choose a cal")
+        if basic_choice == "1":
+            basic_resault()
+            
+        elif basic_choice == "2":
+            get_procent()
+            
+        elif basic_choice == "3":
+            get_avg()
+            
+        elif basic_choice == "4":
+            mlh_finder()
+        break
+
+
+def advanced_cal():
+    while True:
+        clear_terminal()
+        print("You have picked advanced math!")
+        print("1. Find square root of a number!")
+        print("2. +, -, *, /. with fractions")
+        print("3. Find volume of a 3d")
+        print("4. find areal")
+        calcu_choice = input("\nWhich do you wanna pick?: ")
+        if calcu_choice == "1":
+            get_square_root()
+        elif calcu_choice == "2":
+            cal_fractions()
+        elif calcu_choice == "3":
+            find_3d_vol()
+        elif calcu_choice == "4":
+            find_areal()
+        break
+
+
+
+def basic_resault():
+    while True:
+        plus = lambda a,b: a + b
+        minus = lambda a,b: a - b
+        divide = lambda a,b: a / b
+        mul = lambda a,b: a * b
+        clear_terminal()
+        print("Which one?")
+        cal = input("+ - * /")
+        cal = cal.strip(" ")
+        if cal in ["+", "-", "*", "/"]:
+            print("Number 1")
+            num1 = input(": ")
+            num1 = make_float(num1)
+            print("Number 2")
+            num2 = input(": ")
+            num2 = make_float(num2)
+            ops = {
+            "+": plus,
+            "-": minus,
+            "*": mul,
+            "/": divide
+            }
+            resault = ops[cal](num1, num2)
+            print(resault)
+            saved(F"{num1} {cal} {num2} = {resault}")
+            time.sleep(3)
+            main()
+            break
+            
+
+
+
+def get_procent():
+        clear_terminal()
+        while True:
+            print("you picked get procent of number ")
+            num1 = input("number 1: ")
+            if num1.isdigit():
+                procent = input("\nHow much procent of that: ")
+                if procent.isdigit():
+                    cal_procent = int(num1) / 100
+                    full_cal = cal_procent * int(procent)
+                    print(f"\n{procent}% of {num1} is {full_cal}")
+                    saved(f"\n{procent}% of {num1} is {full_cal}")
+                    time.sleep(4)
+                    main()
+
+
+
+def get_avg():
+    clear_terminal()
+    while True:
+        print("You picked get avg of a number of numbers")
+        colums = input("How many different numbers is needed: ")
+        if colums.isdigit():
+            colums = int(colums)
+            numbers = []
+            divide = colums
+            divide = int(divide)
+            while colums > 0:
+                num = input("input a number: ")
+                num = int(num)
+                numbers.append(num)
+                colums = colums - 1
+                if colums <= 0:
+                    print(f"Current numbers: {numbers}")
+                    avg = sum(numbers) / divide
+                    print(f"Avg in all those nums: {avg} ")
+                    time.sleep(2)
+                    main()
+                    break
+
+
+def mlh_finder():
+    clear_terminal()
+    row = []
+    while True:
+        print("You picked to find med low high in a list")
+        nums = input("input the numbers (type x to stop): ")
+        nums = nums.strip(" ")
+        if nums == "x":
+            medianm = statistics.mode(row)
+            medianh = max(row)
+            medianl = min(row)
+            print(f"\nmode: {medianm}")
+            print(f"highest numb: {medianh}")
+            print(f"lowest numb: {medianl}")
+            saved(f" mode high low in{row} = M: {medianm} H: {medianh} L: {medianl}")
+            time.sleep(2)
+            main()
+            break
+        else:
+            if nums.isdigit():
+                nums = float(nums)
+                row.append(nums)
+                print(row)
+            else:
+                print("ERROR. Did u put a space?")
+
+
+def get_square_root():
+    while True:
+        clear_terminal()
+        print("You picked to get square root of a number")
+        num = input("number: ")
+        num = float(num)
+        
+        print(math.sqrt(num))
+        saved(f"Square root of {num} is {math.sqrt(num)}")
+        time.sleep(2)
+        main()
+        break
+
+def cal_fractions():
+    
+    
+    plus = lambda a,b: a + b
+    minus = lambda a,b: a - b
+    divide = lambda a,b: a / b
+    mul = lambda a,b: a * b
+    ops = {
+            "+": plus,
+            "-": minus,
+            "*": mul,
+            "/": divide
+            }
+    fracs = []
+    while True:
+        clear_terminal()
+        nums = input("input number: ")
+        if len(fracs) == 4:
+            print("+ - * /")
+            choice = input(": ")
+            if choice in ["+","-","/","*"]:
+                frac = ops[choice](Fraction(fracs[0], fracs[1]),Fraction(fracs[2], fracs[3]))
+                print(f"\n {frac}")
+                saved(f"{Fraction(fracs[0], fracs[1])} {choice} {Fraction(fracs[2], fracs[3])} = {frac}")
+                time.sleep(2)
+                main()
+                break
+                
+                
+        else:
+            nums = make_int(nums)
+            fracs.append(nums)
+            print(fracs)
+            
+def find_areal():
+    clear_terminal()
+    while True:
+        print("Which object?")
+        print("\nWhich object?")
+        print("1. Sqaure")
+        print("2. Triangle")
+        print("3. Circle (Soon)")
+        form = input("Which do you wanna pick: ")
+        if form in ["1","2"]:
+            corners = []
+            resault = 0
+            while True:
+                if len(corners) == 2:
+                    if form == "1":
+                        resault = corners[0] * corners[1]
+                        print(f"{corners[0]} * {corners[1]} = {resault}")
+                        saved(f"(Areal) {corners[0]} * {corners[1]} = {resault}")
+                        time.sleep(2)
+                        main()
+                        break
+                    else:
+                        resault = corners[0] * corners[1] / 2
+                        print(f"{corners[0]} * {corners[1]} / 2 = {resault}")
+                        saved(f"(Areal) {corners[0]} * {corners[1]} / 2 = {resault}")
+                        time.sleep(2)
+                        main()
+                        break
+                else:
+                    nums = input("Input a number: ")
+                    corners.append(make_float(nums))
+                
+
+def find_3d_vol():
+    while True:
+        clear_terminal()
+        print("\nWhich object?")
+        print("1. Sqaure")
+        print("2. Triangle")
+        print("3. Circle (Soon)")
+        form = input("Which do you wanna pick: ")
+        if form in ["1","2"]:
+            corners = []
+            resault = 0
+            if len(corners) < 4:
+                while True:
+                    nums = input("Input a number: ")
+                    corners.append(make_float(nums))
+                    
+                    if len(corners) == 3:
+                        
+                        if form == "1":
+                            resault = corners[0] * corners[1] * corners[2]
+                            print(f"{corners[0]} * {corners[1]} * {corners[2]} = {resault}")
+                            saved(f"(3d) {corners[0]} * {corners[1]} * {corners[2]} = {resault}")
+                            time.sleep(2)
+                            main()
+                            break
+                            
+                        elif form == "2":
+                            resault = corners[0] * corners[1] * corners[2] / 2
+                            print(f"{corners[0]} * {corners[1]} * {corners[2]} / 2 = {resault}")
+                            saved(f"(3d) {corners[0]} * {corners[1]} * {corners[2]} / 2 = {resault}")
+                            time.sleep(2)
+                            main()
+                            break
+        
+
+def update_log():
+    print("\nCurrent update log:")
+    print("- added update log")
+    print("- fixed bugs")
+    print("This will show for 10 seconds then revert back")
+    time.sleep(10)
+    main()
+
+
+
+def change_language():
+    clear_terminal()
+    print("Which language do u wanna pick?")
+    print("da for danish")
+    print("tr for Turkish")
+    print("en for English")
+    choice = input(" type desired language:")
+    if choice == "da":
+        global current_lang
+        current_lang = "da"
+        clear_terminal()
+        main()
+    elif choice == "tr":
+        current_lang = "tr"
+        clear_terminal()
+        main()
+    elif choice == "en":
+        current_lang = "en"
+        clear_terminal()
+        main()
+
+def saved(text):
+    past_calculation_list.append(text)
+
+def make_int(num):
+    try:
+        num = int(num)
+        return(num)
+    except:
+        print("ERROR default set to 1!")
+        return(int(1))
+    
+def make_float(num):
+    try:
+        num = float(num)
+        return(num)
+    except:
+        print("ERROR default set to 1!")
+        return(float(1))
+
+main()
