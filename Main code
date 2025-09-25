@@ -19,7 +19,12 @@ language = {
         "change lang": "4. Skift sprog!",
         "prem_msg": "Det ser ud til, at du bruger premium. Tak!",
         "pick": "\nHvilken vil du vælge?: ",
-        "how to premium": "5. Hvordan man køber premium"
+        "how to premium": "5. Hvordan man køber premium",
+        "ul": "6. opdatere log",
+        "b1": "\nDet ligner, at du bruger basis. Vil du opgradere?",
+        "b2": "Hvis det er en fejl, kan det skyldes vores server",
+        "b3": "Genstart venligst, indtil det virker. Undskyld!",
+        "prem_error": "Beklager, dette er et premiumvalg!"
         
     },
     "en" : {
@@ -30,7 +35,12 @@ language = {
         "change lang": "4. Change language!",
         "prem_msg": "Looks like your using premium. Thanks!",
         "pick": "\nWhich do you wanna pick?: ",
-        "how to premium": "5. How to buy premium"
+        "how to premium": "5. How to buy premium",
+        "ul": "6. update log",
+        "b1": "\nLooks like your using basic. wanna upgrade?",
+        "b2": "IF its a error it might be because of our server",
+        "b3": "Please relaunch until its correct. Sorry!",
+        "prem_error": "Sorry this is a premium selection!"
         
 
     },
@@ -42,7 +52,13 @@ language = {
         "change lang": "4. Dili değiştirin!",
         "prem_msg": "Premium kullanıyorsunuz sanırım. Teşekkürler!",
         "pick": "\nHangisini seçmek istersin?: ",
-        "how to premium": "5. Premium nasıl satın alınır"
+        "how to premium": "5. Premium nasıl satın alınır",
+        "ul": "6. güncelleme günlüğü",
+        "b1": "\nGörünüşe göre temel sürümü kullanıyorsun. Yükseltmek ister misin?",
+        "b2": "Eğer bu bir hata ise, sunucumuzdan kaynaklanıyor olabilir",
+        "b3": "Doğru olana kadar lütfen yeniden başlat. Üzgünüz!",
+        "prem_error": "Üzgünüz, bu bir premium seçenektir!"
+
 
     }
 
@@ -83,7 +99,7 @@ def get_motherboard_serial():
 
 def check_premium():
     global premium
-    serial = get_motherboard_serial()
+    serial = get_motherboard_serial() 
     print("Connecting to server pls wait!")
     print("Could take a small minute")
 
@@ -128,15 +144,14 @@ def main():
         print(language[current_lang]["past"])
         print(language[current_lang]["change lang"])
         print(language[current_lang]["how to premium"])
-        print("6. Update log")
+        print(language[current_lang]["ul"])
         
         if premium == True:
             print(language[current_lang]["prem_msg"])
         elif premium == False:
-            print("\nLooks like your using basic. wanna upgrade?")
-            print("IF its a error it might be because of our server")
-            print("ICheck WIFI connection too!")
-            print("Please relaunch until its correct. Sorry!")
+            print(language[current_lang]["b1"])
+            print(language[current_lang]["b2"])
+            print(language[current_lang]["b3"])
             
         
         calcu_choice = input(print(language[current_lang]["pick"]))
@@ -148,7 +163,7 @@ def main():
             if premium == True:
                 advanced_cal()
             else:
-                print("Sorry this is a Premium Selection!")
+                print(language[current_lang]["prem_error"])
                 time.sleep(2)
                 clear_terminal()
         elif calcu_choice == "3":
@@ -156,7 +171,7 @@ def main():
                 for i in past_calculation_list:
                     print(f"\n {i}")
             else:
-                print("Sorry this is a Premium Selection!")
+                print(language[current_lang]["prem_error"])
                 time.sleep(2)
         elif calcu_choice == "4":
             change_language()
@@ -431,8 +446,8 @@ def find_3d_vol():
 
 def update_log():
     print("\nCurrent update log:")
-    print("- added update log")
-    print("- fixed bugs")
+    print("- language support on main menu")
+    print("- github made!")
     print("This will show for 10 seconds then revert back")
     time.sleep(10)
     main()
