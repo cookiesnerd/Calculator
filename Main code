@@ -10,6 +10,14 @@ import math
 pre_price = 25
 current_lang = "en"
 past_calculation_list = []
+def get_motherboard_serial():
+    try:
+        cmd = 'powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty ProcessorId"'
+        output = subprocess.check_output(cmd, shell=True)
+        serial = output.decode().strip()
+        return serial if serial else "UNKNOWN"
+    except Exception:
+        return "UNKNOWN"
 language = {
     "da" : {
         "main title": "Welcomen til arifs super cool lommeregner",
@@ -24,7 +32,11 @@ language = {
         "b1": "\nDet ligner, at du bruger basis. Vil du opgradere?",
         "b2": "Hvis det er en fejl, kan det skyldes vores server",
         "b3": "Genstart venligst, indtil det virker. Undskyld!",
-        "prem_error": "Beklager, dette er et premiumvalg!"
+        "prem_error": "Beklager, dette er et premiumvalg!",
+        "line1": f"🔍 Din computers nummer: {get_motherboard_serial()}",
+        "line2": f"mød mig personligt og giv mig kontanterne: {pre_price}dkk",
+        "line3": f"skriv til mig eller vis mig {get_motherboard_serial()}",
+        "line4": "efter noget tid skal du genstarte, og så har du premium!"
         
     },
     "en" : {
@@ -40,7 +52,11 @@ language = {
         "b1": "\nLooks like your using basic. wanna upgrade?",
         "b2": "IF its a error it might be because of our server",
         "b3": "Please relaunch until its correct. Sorry!",
-        "prem_error": "Sorry this is a premium selection!"
+        "prem_error": "Sorry this is a premium selection!",
+        "line1": f"🔍 Ur computers nums: {get_motherboard_serial()}",
+        "line2": f"meet me in person and give me the cash: {pre_price}dkk",
+        "line3": f"text me or show me {get_motherboard_serial()}",
+        "line4": "after some time you should restart and have premium!"
         
 
     },
@@ -57,7 +73,11 @@ language = {
         "b1": "\nGörünüşe göre temel sürümü kullanıyorsun. Yükseltmek ister misin?",
         "b2": "Eğer bu bir hata ise, sunucumuzdan kaynaklanıyor olabilir",
         "b3": "Doğru olana kadar lütfen yeniden başlat. Üzgünüz!",
-        "prem_error": "Üzgünüz, bu bir premium seçenektir!"
+        "prem_error": "Üzgünüz, bu bir premium seçenektir!",
+        "line1": f"🔍 Bilgisayarının numarası: {get_motherboard_serial()}",
+        "line2": f"benimle yüz yüze buluş ve nakit olarak ver: {pre_price}dkk",
+        "line3": f"bana mesaj at veya {get_motherboard_serial()} göster",
+        "line4": "bir süre sonra yeniden başlatmalısın ve premiuma sahip olacaksın!"
 
 
     }
@@ -99,7 +119,7 @@ def get_motherboard_serial():
 
 def check_premium():
     global premium
-    serial = get_motherboard_serial() 
+    serial = get_motherboard_serial()
     print("Connecting to server pls wait!")
     print("Could take a small minute")
 
@@ -177,10 +197,10 @@ def main():
             change_language()
         elif calcu_choice == "5":
             mac = get_motherboard_serial()
-            print(f"🔍 Ur computers nums: {mac}")
-            print(f"meet me in person and give me the cash: {pre_price}dkk ")
-            print(f"text me or show me {mac}")
-            print("after some time you should restart and have premium!")
+            print(language[current_lang][f"line1"])
+            print(language[current_lang][f"line2"])
+            print(language[current_lang][f"line3"])
+            print(language[current_lang][f"line4"])
         elif calcu_choice == "6":
             update_log()
 
@@ -447,7 +467,8 @@ def find_3d_vol():
 def update_log():
     print("\nCurrent update log:")
     print("- language support on main menu")
-    print("- github made!")
+    print("- ")
+    print("- https://github.com/cookiesnerd/Calculator")
     print("This will show for 10 seconds then revert back")
     time.sleep(10)
     main()
